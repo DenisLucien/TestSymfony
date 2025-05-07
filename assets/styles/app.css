@@ -1,0 +1,33 @@
+body {
+  background-color: skyblue;
+}
+
+.navbar-nav {
+  display: flex;
+  flex-direction: row;
+  gap: 50px;
+}
+
+.editbtn {
+  background-color: royalblue;
+  padding: 5px;
+  border-radius: 3px;
+  color: white;
+  text-decoration: none;
+}
+
+.btnAdd {
+  justify-content: center;
+  width: fit-content;
+  background-color: royalblue;
+  padding: 5px 15px;
+  border-radius: 3px;
+  color: white;
+  text-decoration: none;
+  margin-bottom: 20px;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+}
