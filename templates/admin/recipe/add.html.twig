@@ -1,0 +1,17 @@
+{% extends 'admin/admin.html.twig' %}
+
+{% block title %}Ajout d'une recette{% endblock %}
+
+{% block body %}
+<h1>Ajoutez votre recette !</h1>
+{{form_start(form)}}
+<div class="d-flex">
+{{form_row(form.title)}}
+{{form_row(form.duration)}}
+</div>
+{{form_rest(form)}}
+{{form_end(form)}}
+ {% endblock %}
+
+
+

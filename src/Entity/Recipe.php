@@ -2,17 +2,19 @@
 
 namespace App\Entity;
 
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use App\Repository\RecipeRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Validator\BanWord;
-
+use Symfony\Component\HttpFoundation\File\File;
 
 #[ORM\Entity(repositoryClass: RecipeRepository::class)]
-#[UniqueEntity('title')]
-#[UniqueEntity('slug')]
+#[UniqueEntity("title")]
+#[UniqueEntity("slug")]
+#[Vich\Uploadable]
 class Recipe
 {
     #[ORM\Id]
@@ -21,38 +23,46 @@ class Recipe
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Assert\Length(min:5,  groups: ['Extra']) ]
-    #[BanWord(groups: ['Extra'])]
-    private ?string $title = null;
-
- 
+    #[Assert\Length(min: 5)]
+    #[BanWord]
+    private string $title = "";
 
     #[ORM\Column(length: 255)]
-    #[Assert\Length(min:5) ]
-    #[Assert\Regex('/^[a-z0-9]+(?:-[a-z0-9]+)*$/', message:'Invalid slug')]
-    private ?string $slug = null;
+    #[Assert\Length(min: 5)]
+    #[Assert\Regex('/^[a-z0-9]+(?:-[a-z0-9]+)*$/', message: "Invalid slug")]
+    private string $slug = "";
 
     #[ORM\Column(type: Types::TEXT)]
-    #[Assert\Length(min:5) ]
-    private ?string $content = null;
+    #[Assert\Length(min: 5)]
+    private string $content = "";
 
-    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
+    #[ORM\Column(type: "datetime_immutable", nullable: true)]
     private ?\DateTimeImmutable $createdAt = null;
 
-    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
+    #[ORM\Column(type: "datetime_immutable", nullable: true)]
     private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\Column(nullable: true)]
-    #[Assert\LessThan(value :300)]
-    #[Assert\Positive() ]
+    #[Assert\LessThan(value: 300)]
+    #[Assert\Positive]
     private ?int $duration = null;
+
+    #[ORM\ManyToOne(inversedBy: "recipes", cascade: ["persist"])]
+    private ?Category $category = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $thumbnail = null;
+
+    #[Vich\UploadableField(mapping: "recipes", fileNameProperty: "thumbnail")]
+    #[Assert\Image()]
+    private ?File $thumbnailFile = null;
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getTitle(): ?string
+    public function getTitle(): string
     {
         return $this->title;
     }
@@ -64,7 +74,7 @@ class Recipe
         return $this;
     }
 
-    public function getSlug(): ?string
+    public function getSlug(): string
     {
         return $this->slug;
     }
@@ -76,7 +86,7 @@ class Recipe
         return $this;
     }
 
-    public function getContent(): ?string
+    public function getContent(): string
     {
         return $this->content;
     }
@@ -120,6 +130,42 @@ class Recipe
     public function setDuration(?int $duration): static
     {
         $this->duration = $duration;
+
+        return $this;
+    }
+
+    public function getCategory(): ?Category
+    {
+        return $this->category;
+    }
+
+    public function setCategory(?Category $category): static
+    {
+        $this->category = $category;
+
+        return $this;
+    }
+
+    public function getThumbnail(): ?string
+    {
+        return $this->thumbnail;
+    }
+
+    public function setThumbnail(?string $thumbnail): static
+    {
+        $this->thumbnail = $thumbnail;
+
+        return $this;
+    }
+
+    public function getThumbnailFile(): ?File
+    {
+        return $this->thumbnailFile;
+    }
+
+    public function setThumbnailFile(?File $thumbnailFile): static
+    {
+        $this->thumbnailFile = $thumbnailFile;
 
         return $this;
     }

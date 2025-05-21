@@ -14,22 +14,28 @@ final class Version20250430135530 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return '';
+        return "";
     }
 
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql(<<<'SQL'
-            ALTER TABLE recipe ADD duration INT DEFAULT NULL
-        SQL);
+        $this->addSql(
+            <<<'SQL'
+                ALTER TABLE recipe ADD duration INT DEFAULT NULL
+            SQL
+            ,
+        );
     }
 
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->addSql(<<<'SQL'
-            ALTER TABLE recipe DROP duration
-        SQL);
+        $this->addSql(
+            <<<'SQL'
+                ALTER TABLE recipe DROP duration
+            SQL
+            ,
+        );
     }
 }

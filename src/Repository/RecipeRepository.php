@@ -4,7 +4,9 @@ namespace App\Repository;
 
 use App\Entity\Recipe;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @extends ServiceEntityRepository<Recipe>
@@ -18,20 +20,36 @@ class RecipeRepository extends ServiceEntityRepository
 
     public function findTotalDuration()
     {
-        return $this->createQueryBuilder('r')
-        ->select('SUM(r.duration) as total')
-        ->getQuery()
-        ->getResult();
+        return $this->createQueryBuilder("r")
+            ->select("SUM(r.duration) as total")
+            ->getQuery()
+            ->getResult();
     }
 
     public function findWithDurationLowerThan(int $duration): array
-        {
-            return $this->createQueryBuilder('r')
-            ->where('r.duration<=:duration')
-            ->orderBy('r.duration','ASC')
-           ->setParameter('duration',$duration)
+    {
+        return $this->createQueryBuilder("r")
+
+            ->leftJoin("r.category", "c")
+            ->addSelect("r", "c")
+            ->where("r.duration<=:duration")
+            ->orderBy("r.duration", "ASC")
+            ->setMaxResults(10)
+            ->setParameter("duration", $duration)
             ->getQuery()
             ->getResult();
+    }
+
+    public function paginateRecipes(int $page, int $limit): Paginator
+    {
+        return new Paginator(
+            $this->createQueryBuilder("r")
+                ->setFirstResult(0)
+                ->setMaxResults(2)
+                ->getQuery()
+                ->setHint(Paginator::HINT_ENABLE_DISTINCT, false),
+            false,
+        );
     }
 
     //    /**
